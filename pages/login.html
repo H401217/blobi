@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<link rel="stylesheet" href="/assets/stylesheets/mystyle.css">
+	</head>
+	<body>
+		<div id="mainbar">
+			Page Title!
+		</div>
+		<br><br>
+		<div id="body2">
+			<form style="text-align:center;" action="/ajax/site/login">
+				<label for="fmail">Email</label><br>
+				<input type="mail" id="fmail" name="e" required><br>
+				<label for="fpass">Password</label><br>
+				<input type="password" id="fpass" name="p" required><br><br>
+				<input type="hidden" name="_r" value="256">
+				<input type="hidden" name="browser" value="1">
+				<input type="submit" value="Login!">
+			</form>
+		</div>
+	</body>
+</html>

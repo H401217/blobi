@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<link rel="stylesheet" href="/assets/stylesheets/mystyle.css">
+	</head>
+	<body>
+		<div id="mainbar">
+			Page Title!
+			<span id="username">
+				<a href="/login">Login</a>
+			</span>
+		</div>
+		<div id="body2">
+			<img src="/assets/images/h40pou.png" width="10%" height="10%"> <br>
+			Hola no se que poner en esta pagina :v
+			<br><br>
+			<div id="isLogged"></div>
+		</div>
+		
+		<script>
+			function getCookie(cname) {
+				let name = cname + "=";
+				let decodedCookie = decodeURIComponent(document.cookie);
+				let ca = decodedCookie.split(';');
+				for(let i = 0; i <ca.length; i++) {
+					let c = ca[i];
+					while (c.charAt(0) == ' ') {
+						c = c.substring(1);
+					}
+					if (c.indexOf(name) == 0) {
+						return c.substring(name.length, c.length);
+					}
+				}
+				return "";
+			};
+			if (getCookie("unn_session")!="") {
+				document.getElementById("isLogged").innerHTML = "Estas logueado! :D"
+			} else { document.getElementById("isLogged").innerHTML = "Probablemente no estas logueado" };
+		</script>
+	</body>
+</html>

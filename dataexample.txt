@@ -1,0 +1,4 @@
+﻿Users: {"1":{"email":"example@example.com","password":"5f4dcc3b5aa765d61d8327deb882cf99","nickname":"Example","state":"{}","minI":"{}"}}
+Leaderboard: {"game1":{"today":{},"week":{},"month":{},"alltime":{}}}
+Games: {"1":{}}
+Cookies: [{"token":"idhex.timetokencreatehex.random"}]

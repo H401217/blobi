@@ -9,9 +9,7 @@ This is a recreation of "Pou" servers (app.pou.me) made with luarocks and LÖVE2
 # Requirements
 Lua 5.4 (this uses `goto` keyword)
 ## Libraries
-* MD5
 * luasocket
-* lua-cjson
 * luafilesystem
 
 # Installing (or setting up)

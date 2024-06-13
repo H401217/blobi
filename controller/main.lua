@@ -7,12 +7,19 @@ function love.load()
 	render64 = love.thread.getChannel("render64")
 	render64R = love.thread.getChannel("render64R")
 
-	datas = {dbs=0,imgs=0,pings=0}
+	datas = {dbs=0,imgs=0,pings=0} --Stats data
 
 	fonts = {
 		default = love.graphics.getFont(),
-		big = love.graphics.newFont(60)
+		big = love.graphics.newFont("SpicyRice.ttf",90)
 	}
+	function spacing(text,n)
+		local t = ""
+		for i=1,#text,1 do
+			t=t..text:sub(i,i)..(" "):rep(n)
+		end
+		return t:sub(0,#t-1)
+	end
 end
 function love.update(dt)
 	local d1 = render64:pop()
@@ -25,7 +32,11 @@ function love.update(dt)
 			--love.graphics.rectangle("fill",0,0,340,98)
 			love.graphics.setColor(1,1,1,1)
 			love.graphics.setFont(fonts.big)
-			love.graphics.print(js.text)
+			local text = spacing(js.text,1)
+			love.graphics.print(text,
+				340/2-fonts.big:getWidth(text)/2,
+				98/2-fonts.big:getHeight(text)/2
+			)
 			love.graphics.setFont(fonts.default)
 			love.graphics.setCanvas()
 			local data = captcha:newImageData()

@@ -7,12 +7,16 @@ function databases:generatePassword(len,seed,hashit)
 	local pass = ""
 	math.randomseed(seed)
 	math.randomseed(math.floor(math.random(0,30)+len+(os.clock()*124)))
-	print(os.clock())
+
 	for i= 1,len do
 		local r1 = math.random(1,#chars)
 		pass = pass..string.sub(chars,r1,r1)
 	end
 	return hashit and md5.sumhexa(pass) or pass
+end
+
+function databases:newCookie(ID,Time)
+	return ("%X"):format(tonumber(ID)) .. "-" .. ("%X"):format(Time or os.time()) .."-".. self:generatePassword(20,os.time(),true)
 end
 
 function databases:load()

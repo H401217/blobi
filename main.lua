@@ -1,3 +1,5 @@
+MainSettings = require("settings")
+UTIL = require("utilities")
 md5 = require("md5")
 json = require("json")
 function json.decode2(ft)
@@ -30,7 +32,19 @@ databases:load()
 print(databases.Cookies[1]["token"])
 http = require("http")
 templates = require("templates")
-local MAX = 5
+
+local console = {
+	log = print,
+	warn = function(...)
+		local arg = {...}
+		print("\27[92m")
+		print(table.unpack(arg))
+		print("\27[0m")
+	end,
+}
+
+
+local MAX = MainSettings.maxUsers
 local ACTIVE = 0
 
 serversettings = {
@@ -44,13 +58,17 @@ serversettings = {
 
 socket = require("socket")
 local server = socket.tcp()
-clientmanager = socket.udp() --This is a local client that will serve as Server Console when receiving dat
-clientmanager:setsockname("127.0.0.1",5346)
-clientmanager:settimeout(0)
-assert(clientmanager:setpeername("127.0.0.1",5347))
-assert(server:bind("192.168.1.40",3000),"Failed!") --change to your ip and port
-os.execute("echo \27[92mStarting Server at "..server:getsockname().."\27[0m")
-server:listen(--[[MAX]])
+clientmanager = socket.tcp() --This is a local client that will serve as Server Console when receiving dat
+clientmanager:bind("127.0.0.1",5346)
+clientmanager:settimeout(0.01)
+clientmanager:listen(1)
+assert(server:bind(MainSettings.ip,MainSettings.port),"Failed!") --change to your ip and port
+os.execute("echo \27[92mStarting Server at "..server:getsockname().."\27[0m") --enables colored output (windows 10)
+server:listen(MAX)
+
+if MainSettings.LOVEauto == true then
+	os.execute("start "..((MainSettings.LOVE=="") and "love" or MainSettings.LOVE).." "..filesystem.currentdir().."/controller")
+end
 
 function processdata(req)
 	--[[
@@ -64,6 +82,7 @@ function processdata(req)
 		headers
 		body
 	]]
+print(req.body)
 	local status = 200
 	local headers = {}
 	local body = ""
@@ -99,7 +118,7 @@ function processdata(req)
 			headers["Content-Type"] = btype
 		end
 	elseif string.starts(req.path,"/ajax") then
-		if (tonumber(req.queries["_r"]) or 0) >= 253 then print("siu")
+		if (tonumber(req.queries["_r"]) or 0) >= MainSettings.minVer then print("siu")
 			local has_access = false
 			local usercookie = http:decodeCookie(req.headers["cookie"] or "")["unn_session"]
 			for a,b in pairs(databases.Cookies) do
@@ -172,6 +191,9 @@ end
 
 local threads = {}
 server:settimeout(0.001)
+
+controller = nil --Controller client object (tcp)
+
 while true do
 	local client = server:accept()
 	if client then
@@ -203,23 +225,35 @@ while true do
 			end
 		end
 	end
-	local dat = clientmanager:receive()
-	if dat then
-		local success,datjs = pcall(function() return json.decode(dat) end)
-		if success and datjs then
-			local auth = datjs.auth or "" print(auth)
-			if md5.sumhexa(auth) == "6a3f5243b0dbe0a38da23114f7ecd48c" then
-				local op = datjs.op
-				if op == 0 then --ping
-					print("\27[92mPong!\27[0m")
-					clientmanager:send('{"op":0,"success":true}')
-				elseif op == 1 then
-					local time = datjs.time
-					local s,err = pcall(function() databases:save() end)
-					clientmanager:send(json.encode{op=2,success=tostring(s),time=socket.gettime()-time})
+
+	if controller then
+		local _,err = controller:settimeout(0.001)
+		if err then
+			controller:close()
+			controller = nil
+		end
+		local dat,err,partial = controller:receive()
+		dat = (dat=="" or dat==nil) and partial or dat
+		if dat then
+			local success,datjs = pcall(function() return json.decode(dat) end)
+			if success and datjs then
+				local auth = datjs.auth or ""
+				if md5.sumhexa(auth) == "6a3f5243b0dbe0a38da23114f7ecd48c" then
+					local op = datjs.op
+					if op == 0 then --ping
+						print("\27[92mPong!\27[0m")
+						controller:send('{"op":0,"success":true}')
+					elseif op == 1 then --save data
+						local time = datjs.time
+						local s,err = pcall(function() databases:save() end)
+						controller:send(json.encode{op=2,success=tostring(s),time=socket.gettime()-time})
+					end
 				end
 			end
 		end
+	else
+		local object = clientmanager:accept()
+		controller = object or controller
 	end
 end
 

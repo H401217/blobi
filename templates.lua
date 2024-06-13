@@ -14,6 +14,10 @@ function templates:load(filename,bin)
 	return content,size,s2[#s2]
 end
 
+function templates:redirect(path)
+	return '<html><head><meta http-equiv="refresh" content="0; url='..path..'" /></head></html>'
+end
+
 function templates:err(...)
 	local arg = {...}
 	local str = templates.errors[arg[1]]

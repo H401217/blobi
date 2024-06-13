@@ -2,11 +2,13 @@ return function(req)
 	local cI = req.queries["cI"]
 	local cA = req.queries["cA"]
 	local email = req.queries["e"]
+
 	local res = {body="",headers={}}
 	local body = {success=false}
+
 	local obj = databases.captcha[cI]
-	if obj and email then
-		if obj.answer == cA then
+	if obj and email then --CAPTCHA exists and provides e-mail
+		if obj.answer == cA then --CAPTCHA answer is correct
 			local id
 			local tempid
 			repeat
@@ -43,10 +45,10 @@ return function(req)
 			local capLen = 5
 			local capAns = databases:generatePassword(capLen,os.time())
 			
-			clientmanager:send(json.encode({op=1,text=capAns,id=rng}))
-			clientmanager:settimeout(.1)
-			local dat = clientmanager:receive()
-			clientmanager:settimeout(0)
+			controller:send(json.encode({op=1,text=capAns,id=rng}))
+			controller:settimeout(.1)
+			local _,_,dat = controller:receive()
+			controller:settimeout(0.01)
 			local i64 = ""
 			local _s, js = pcall(function() return json.decode(dat) end)
 			if _s then

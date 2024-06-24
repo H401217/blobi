@@ -34,6 +34,7 @@ http.heads = {
 	[403]="Forbidden",
 	[404]="Not Found",
 	[411]="Length Required",
+	[418]="I'm a teapot",
 	[429]="Too Many Requests",
 	[451]="Unavailable For Legal Reasons",
 	[500]="Internal Server Error",
@@ -76,7 +77,7 @@ function http:decodeRecord(str)
 		if split2[2] then
 			for a,b in pairs(mysplit(split2[2],"&")) do
 				local split3 = mysplit(b,"=")
-				tab.queries[split3[1]]=unescapeurl(split3[2] or "")
+				tab.queries[split3[1]]=UTIL.unescapeurl(split3[2] or "")
 			end
 		end
 		return tab

@@ -1,30 +1,9 @@
 MainSettings = require("settings")
-UTIL = require("utilities")
 md5 = require("md5")
 json = require("json")
-function json.decode2(ft)
-	local tab1 = json.decode(ft)
-	local function dec(t)
-		for a,b in pairs(t) do
-			if type(b) == "string" then
-				if string.sub(b,1,1) == "{" or string.sub(b,1,1) == "[" then
-					t[a] = js.decode(t[a]) --string.sub(b,1,string.len(b))
-					t[a] = dec(t[a])
-				end
-			end
-		end
-		return t
-	end
-	return dec(tab1)
-end
+UTIL = require("utilities")
 
-local hex_to_char = function(x)
-  return string.char(tonumber(x, 16))
-end
 
-unescapeurl = function(url)
-  return url:gsub("%%(%x%x)", hex_to_char)
-end
 
 filesystem = require("lfs")
 databases = require("databases")
@@ -147,7 +126,7 @@ print(req.body)
 end
 
 function handlepeer(client)
-print(client)
+--print(client)
 	local initialclock = os.clock()
 	client:settimeout(0.01)
 	local line = 0

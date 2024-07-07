@@ -2,3 +2,4 @@
 Leaderboard: {"game1":{"today":{},"week":{},"month":{},"alltime":{}}}
 Games: {"1":{}}
 Cookies: [{"token":"idhex.timetokencreatehex.random"}]
+notifications: {"1":{"t":33,"oT":0,"oI":0,"a":1234,"u2I":0,"o2I":0}}

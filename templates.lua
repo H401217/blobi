@@ -18,6 +18,13 @@ function templates:redirect(path)
 	return '<html><head><meta http-equiv="refresh" content="0; url='..path..'" /></head></html>'
 end
 
+function templates:mainPath(path)
+	print(path)
+	path = (path=="/") and "/index" or path
+	print(path,"aaaa")
+	return templates:load("pages"..path..".html")
+end
+
 function templates:err(...)
 	local arg = {...}
 	local str = templates.errors[arg[1]]
@@ -29,8 +36,8 @@ function templates:err(...)
 end
 
 templates.errors={
-	usernotloggedin='{"error":{"type":"UserNotLoggedIn","message":"You need to login to continue."}}',
-	clientoutdated='{"error":{"type":"ClientOutdated","message":"Your client is too old. Please update.","diffClient":false}}',
+	notlogged='{"error":{"type":"UserNotLoggedIn","message":"You need to login to continue."}}',
+	update='{"error":{"type":"ClientOutdated","message":"Your client is too old. Please update.","diffClient":%s}}', --true if update needs to wait
 	success='{"success":%s}',
 	sitemaintenance='{"error":{"type":"FeatureMaintenance"}}',
 	siteoffline='{"error":{"type":"SiteOffline"}}'

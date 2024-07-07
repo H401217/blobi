@@ -3,6 +3,7 @@
 settings.ip = "127.0.0.1"		--The IP address for the server
 settings.port = 3000				--The server port
 settings.maxUsers = 5				--Maximum amount of clients that can connect
+settings.speed = 2048               --bytes that server can receive every loop
 
 settings.minVer = 1 --256			--Minimum client version
 

@@ -32,6 +32,9 @@ function databases:load()
 	local f4 = io.open(self.folder .."Leaderboard.json","r")
 	databases.Leaderboard = json.decode(f4:read("*all"))
 	f4:close()
+	local f5 = io.open(self.folder .."Notifications.json","r")
+	databases.Notifications = json.decode(f5:read("*all"))
+	f5:close()
 end
 
 function databases:save()
@@ -47,6 +50,17 @@ function databases:save()
 	local f4 = io.open(self.folder .."Leaderboard.json","w")
 	f4:write(json.encode(databases.Leaderboard))
 	f4:close()
+	local f5 = io.open(self.folder .."Notifications.json","w")
+	f5:write(json.encode(databases.Notifications))
+	f5:close()
+end
+
+function databases:newNotification(val,typ,expires) --val = value, typ = type (33 for coins), expires = unix for notification expire
+	local id = ""
+	repeat
+		id = tostring(math.random(1,9999999))
+	until not (databases.Notifications[id])
+	databases.Notifications[id]={t=(typ or 33), a=val, oT=0, oI=0, u2I=0, o2T=0, expire=(expires or -1)}
 end
 
 return databases

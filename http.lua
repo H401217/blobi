@@ -106,7 +106,7 @@ function http:decodeCookie(str)
 	return tab
 end
 
-function http:decodePou(req)
+function http:decodePou(req) --gets ID
 	local c = self:decodeCookie(req.headers["cookie"] or "")["unn_session"] or ""
 	return tostring(tonumber(c:sub(0,c:find("-")-1),16))
 end

@@ -1,6 +1,6 @@
 return function(req)
 	local res = {body = templates:err("success",false), headers = {}}
-	local UserID = http:decodePou(req)
+	local UserID = tostring(http:decodePou(req))
 	local ID = req.queries["id"]
 	local notif = databases.Notifications[tostring(ID)]
 
@@ -12,7 +12,7 @@ return function(req)
 		if not usernotifs then
 			usernotifs = databases.Users[UserID].notifications = {}
 		end
-		table.insert(usernotifs,tostring("ID"))
+		table.insert(usernotifs,tostring(ID))
 		res.body = templates:err("success",true)
 	end
 	

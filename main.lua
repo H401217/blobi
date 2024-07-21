@@ -22,6 +22,8 @@ serversettings = {
 		"/ajax/site/register",
 		"/ajax/site/reset_password",
 		"/ajax/site/check_email",
+		"/ajax/site/top_likes",
+		"/ajax/site/top_scores",
 	}
 }
 

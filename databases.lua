@@ -21,19 +21,19 @@ end
 
 function databases:load()
 	local f1 = io.open(self.folder .."Users.json","r")
-	databases.Users = json.decode(f1:read("*all"))
+	databases.Users = json.decode(f1:read("*all")) or {}
 	f1:close()
 	local f2 = io.open(self.folder .."Cookies.json","r")
-	databases.Cookies = json.decode(f2:read("*all"))
+	databases.Cookies = json.decode(f2:read("*all")) or {}
 	f2:close()
 	local f3 = io.open(self.folder .."Games.json","r")
-	databases.Games = json.decode(f3:read("*all"))
+	databases.Games = json.decode(f3:read("*all")) or {}
 	f3:close()
 	local f4 = io.open(self.folder .."Leaderboard.json","r")
-	databases.Leaderboard = json.decode(f4:read("*all"))
+	databases.Leaderboard = json.decode(f4:read("*all")) or {}
 	f4:close()
 	local f5 = io.open(self.folder .."Notifications.json","r")
-	databases.Notifications = json.decode(f5:read("*all"))
+	databases.Notifications = json.decode(f5:read("*all")) or {}
 	f5:close()
 end
 
@@ -61,6 +61,27 @@ function databases:newNotification(val,typ,expires) --val = value, typ = type (3
 		id = tostring(math.random(1,9999999))
 	until not (databases.Notifications[id])
 	databases.Notifications[id]={t=(typ or 33), a=val, oT=0, oI=0, u2I=0, o2T=0, expire=(expires or -1)}
+end
+
+function databases:unclaimedNotifications(id)
+	local available = {}
+	for k,v in pairs(databases.Notifications) do
+		if os.time()<=expire then
+			local claimed=false
+			for a,b in ipairs(databases.Users[tostring(id)].notifications) do
+				if b == k then
+					claimed = true
+					break
+				end
+			end
+			if not claimed then
+				table.insert(available,v)
+				available[#available].i = tonumber(k)
+				available[#available].expire = nil
+			end
+		end
+	end
+	return available
 end
 
 return databases

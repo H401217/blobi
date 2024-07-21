@@ -27,6 +27,7 @@ return function(req)
 						state=v.state,
 						version=tonumber(v.ver.v),
 						revision=tonumber(v.ver.r),
+						unclaimedNotifications = databases:unclaimedNotifications(tostring(id))
 						success = true
 					}
 					

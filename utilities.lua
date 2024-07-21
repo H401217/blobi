@@ -55,4 +55,20 @@ UTIL.split = function(inputstr, sep) --stackoverflow
 	return t
 end
 
+table.find = function(tab, value)
+	for k,v in ((#tab>=1) and ipairs(tab) or pairs(tab)) do
+		if v==value then
+			return k
+		end
+	end
+end
+
+table.count = function(tab)
+	local count = 0
+	for k,v in pairs(tab) do
+		count=count+1
+	end
+	return count
+end
+
 return UTIL

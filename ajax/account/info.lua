@@ -12,6 +12,7 @@ return function(req)
 		res.l = ""
 		res.nF = ""
 		res.nL = ""
+		res.unclaimedNotifications = databases:unclaimedNotifications(id)
 	end
 	
 	return {body=json.encode(res),headers={}}

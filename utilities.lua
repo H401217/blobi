@@ -1,6 +1,6 @@
 local UTIL = {}
 
---UTIL.b64 = require("base64")
+UTIL.b64 = require("base64")
 UTIL.jsonloop = function(ft)
     local tab1 = json.decode(ft)
 	local function dec(t)

@@ -9,15 +9,17 @@ return function(req)
 		goto done
 		return res
 	end
-	local _js = json.decode(req.body)
+	do
+		local _js = json.decode(req.body)
 	
-	local id = tostring(http:decodePou(req))
+		local id = tostring(http:decodePou(req))
 	
-	if _js.state and _js.minInfo then
-		if json.decode(_js.state) and json.decode(_js.minInfo) then
-			databases.Users[id].state=_js.state databases.Users[id].minI=_js.minInfo; databases.Users[id].notifications = (databases.Users[id].notifications) or {}
-			databases.Users[id].ver.v = req.queries["_v"] databases.Users[id].ver.r = req.queries["_r"]
-		else succeed = false
+		if _js.state and _js.minInfo then
+			if json.decode(_js.state) and json.decode(_js.minInfo) then
+				databases.Users[id].state=_js.state databases.Users[id].minI=_js.minInfo; databases.Users[id].notifications = (databases.Users[id].notifications) or {}
+				databases.Users[id].ver.v = req.queries["_v"] databases.Users[id].ver.r = req.queries["_r"]
+			else succeed = false
+			end
 		end
 	end
 	::done::

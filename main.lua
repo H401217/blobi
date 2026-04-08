@@ -115,40 +115,63 @@ function handlepeer(client) --Only supporting HTTP 1.0
 	local body
 	local cip,cport = client:getpeername()
 	if not cip then return end
-
+	print("an user called "..cip.."wants to connect invasor")
 	while true do
 		local data
+		local extractingBody = false
 		local ended = false
-		local full,err,partial = client:receive(MainSettings.speed) --note2: tbd --note: STOP USING THIS SYSTEM, use a parser to be faster (franchesco virgolini)
+		local full,err,partial = client:receive(MainSettings.speed) --note2: tbd --note: STOP USING THIS SYSTEM, use a parser to be faster (franchesco virgolini) nota 3: q vrg hiciste no entiendo tu sugerencia
+			print("data:::",full,err,partial)
 		data = UTIL.empty(full) and partial or full
+			local printablexd = string.gsub(data,"\n","\\n")
+			printablexd = string.gsub(printablexd,"\r","\\r")
+			print("printable::",printablexd)
 		while true do
-			local start = data:find("\n")
+			local start = data:find("\n") --extrae una sola línea
 			if start then
 				local chunk = data:sub(0,start)
-				data=data:sub(start+1)
-				chunk = chunk:sub(0,#chunk-1)
+				data=data:sub(start+1) --eso demuestra que es un chunk que se come a pedazos
+				chunk = chunk:sub(0,#chunk-1) --remove \n
 				if chunk:sub(#chunk)=="\r" then
-					chunk = chunk:sub(0,#chunk-1)
+					chunk = chunk:sub(0,#chunk-1) --remove \r (who tf puts \n\r)
 				end
 				if chunk then
 					line = line + 1
 					if line == 1 then
 						record = http:decodeRecord(chunk) --Gets HTTP version, path, queries and method
+						print("extracted record ye")
 					else
-						if #chunk > 0 then
+						if #chunk > 0 and (not extractingBody) then
 							local k,v = http:decodeHeader(chunk) --Gets all headers
 							headers[k] = v
+							print("extracted header::: ".. k)
 						else --Checks the newline between headers and body
-							local expected_length = tonumber(headers["content-length"] or 0)
-							if (expected_length or 0) ~= 0 then
+							local expected_length
+							if not extractingBody then
+								expected_length = tonumber(headers["content-length"] or 0)
+							else
+								expected_length = tonumber(headers["content-length"] or 0) - #body
+							end
+								print("how did we got here, anyways the expected length is ".. expected_length)
+								local printablexd = string.gsub(data,"\n","\\n")
+								printablexd = string.gsub(printablexd,"\r","\\r")
+								print("printable body::",printablexd)
+							extractingBody = true
+							if (expected_length or 0) >= 1 then
 								body = data:sub(0,expected_length)
 								data=data:sub(expected_length+1)
-								if not (#body >= expected_length) then
-									local rest = client:receive(expected_length-#body)
-									body=body..rest
-								end
-								if #body>=expected_length then
-									ended = true
+								while true do --stop please im begging
+									if not (#body >= expected_length) then
+										local rest,err,partrest = client:receive(expected_length-#body) --bru how do you expect to receive that PLEASE USE THE BANDWIDTH
+										bodydat = UTIL.empty(rest) and partrest or rest
+									--fixing bug, code is extracting from rest, but we cannot assure, so we extract from rest
+										print("getting buggy body",rest,err,partrest)
+										body=body..bodydat
+									end
+									if #body>=expected_length then
+										ended = true
+										break
+									end
 								end
 							else ended = true
 							end
@@ -158,16 +181,19 @@ function handlepeer(client) --Only supporting HTTP 1.0
 				else
 					local diff = os.clock()-initialclock
 					if diff >= 5 then
+						print("got a timeout because the client is very lazy like me")
 						client:send("HTTP 408 Request Timeout\nConnection:close\n\n")
 						client:close()
 						return
 					end
 				end
 			elseif UTIL.empty(data) then
+				print("no data but not closed")
 				break
 			end
 		end
 		if ended then
+			print("closed: there is no more data available")
 			break
 		end
 		coroutine.yield() --the laggy guy
@@ -186,6 +212,7 @@ while true do
 	local client = server:accept()
 	if client then
 		if ACTIVE >= MAX then
+			print("ERROR: sorry we're full xd")
 			client:close()
 		else
 			for i = 1,MAX do

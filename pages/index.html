@@ -4,8 +4,15 @@
 		<link rel="stylesheet" href="/assets/stylesheets/mystyle.css">
 	</head>
 	<body>
+		<ul id="menu">
+			<li><a id="hamburgerbutton" >X</a></li>
+			<li><a class="active" id="hboption1"></a></li>
+			<li><a id="hboption2"></a></li>
+			<li><a id="hboption3"></a></li>
+			<li><a id="hboption4"></a></li>
+		</ul>
 		<div id="mainbar">
-			Page Title!
+			Blobi test server!
 			<span id="username">
 				<a href="/login">Login</a>
 			</span>
@@ -36,6 +43,20 @@
 			if (getCookie("unn_session")!="") {
 				document.getElementById("isLogged").innerHTML = "Estas logueado! :D"
 			} else { document.getElementById("isLogged").innerHTML = "Probablemente no estas logueado" };
+
+			let OpenMenu = true;
+			let Options = ["Home","My Profile","Search","Play"]
+			function click() {
+				document.getElementById("menu").style.width = (OpenMenu && "50px" || "200px")
+				let count;
+				for (count=1;count<5;count++) {
+					console.log(count)
+					document.getElementById(`hboption${count}`).innerHTML = (OpenMenu && `<img src="/assets/images/hboption${count}.png" style="max-width: 100%;max-height: 100%;height: auto;">` || Options[count-1])
+				}
+				OpenMenu = !OpenMenu
+			}
+			document.getElementById("hamburgerbutton").addEventListener("click",click)
+			click()
 		</script>
 	</body>
 </html>
